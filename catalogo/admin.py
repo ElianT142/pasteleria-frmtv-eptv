@@ -21,4 +21,15 @@ class productoAdmin(admin.ModelAdmin):
     
 @admin.register(encargo)
 class encargoAdmin(admin.ModelAdmin):
-    list_display=('nombre','fecha_encargo','codigo','producto',)
+    list_display=('nombre','fecha_encargo','codigo','producto','total_original_clp','total_descuento_clp','total_final_clp',)
+    @admin.display(description='Total original', ordering='total_original')
+    def total_original_clp(self, obj):
+        return formato_clp(obj.total_original)
+
+    @admin.display(description='Total descuento', ordering='total_descuento')
+    def total_descuento_clp(self, obj):
+        return formato_clp(obj.total_descuento)
+
+    @admin.display(description='Total final', ordering='total_final')
+    def total_final_clp(self, obj):
+        return formato_clp(obj.total_final)

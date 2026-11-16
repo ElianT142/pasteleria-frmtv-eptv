@@ -16,14 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf import settings
 from django.urls import re_path
 from catalogo import views
+from django.conf import settings
 from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
+    path('encargar/<int:id>/', views.encargar, name='encargar'),
+    path('boleta/<int:id>/', views.boleta, name='boleta'),
 ]
 
 if settings.DEBUG:

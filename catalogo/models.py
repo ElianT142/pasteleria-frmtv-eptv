@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class linea(models.Model):
@@ -25,13 +26,17 @@ class producto(models.Model):
         return self.nombre
     
 class encargo(models.Model):
-    nombre = models.CharField(max_length=10)
-    correo = models.EmailField(max_length=10)
-    fecha_encargo = models.DateTimeField()
+    nombre = models.CharField(max_length=100)
+    correo = models.EmailField(max_length=100, blank=True)
+    fecha_encargo = models.DateTimeField(auto_now_add=True)
     cantidad = models.SmallIntegerField()
     fecha_retiro = models.DateField()
-    codigo = models.CharField(max_length=10, unique=True)
+    codigo = models.CharField(max_length=10, blank=True, null=True)
     producto = models.ForeignKey(producto, on_delete=models.CASCADE, related_name='encargo')
+    total_original_clp = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_descuento_clp = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_final_clp = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
     class Meta:
         ordering = ['nombre']
         verbose_name_plural = 'encargos'

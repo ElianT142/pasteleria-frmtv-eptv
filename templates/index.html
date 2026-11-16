@@ -34,6 +34,12 @@
                                     <p class="card-text">Precio: ${{ producto.precio }}</p>
                                     <p class="card-text">Stock: {{ producto.stock_dia }}</p>
                                     <p class="card-text">Disponibilidad: {{ producto.disponibilidad|yesno:"Sí,No"   }}</p>
+                                        {% if producto.disponibilidad %}
+                                            <a name="" id="" class="btn btn-primary w-100 mt-auto" href="encargar/{{ producto.id }}" role="button">ENCARGAR</a>
+                                        {% else %}
+                                            <a name="" id="" class="btn btn-danger w-100 mt-auto disabled" href="#" role="button">NO DISPONIBLE</a>
+                                        {% endif %}
+
                                 </div>
                             </div>
                         </div>
