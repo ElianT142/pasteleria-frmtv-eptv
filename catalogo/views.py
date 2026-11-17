@@ -8,7 +8,18 @@ DESCUENTO = 40
 
 def index(request):
     productos = producto.objects.filter(disponibilidad=True).select_related('linea')
-    return render(request, 'index.html', {'productos': productos})
+    q = request.GET.get('q', '').strip()
+    linea_id = request.GET.get('linea', '')
+    if q:
+        productos = productos.filter(nombre__icontains=q)
+    if linea_id.isdigit():
+        productos = productos.filter(linea_id=linea_id)
+    return render(request, 'index.html', {
+        'productos': productos,
+        'lineas': linea.objects.all(),
+        'q': q,
+        'linea_sel': linea_id,
+    })
 
 def boleta(request, id):
     venta = encargo.objects.get(id=id)

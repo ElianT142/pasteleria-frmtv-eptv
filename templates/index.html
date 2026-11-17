@@ -1,6 +1,18 @@
 {% extends 'base.html' %}
 {% load formato %}
 {% block contenido %}
+<form method="get" class="row g-2 mb-3">
+  <div class="col"><input name="q" value="{{ q }}" class="form-control" placeholder="Buscar por nombre"></div>
+  <div class="col">
+    <select name="linea" class="form-select">
+      <option value="">Todas las líneas</option>
+      {% for l in lineas %}
+      <option value="{{ l.id }}" {% if linea_sel == l.id|stringformat:'s' %}selected{% endif %}>{{ l.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto"><button class="btn btn-primary">Filtrar</button></div>
+</form>
 <div class="row row-cols-3 g-3">
   {% for p in productos %}
   <div class="col">
