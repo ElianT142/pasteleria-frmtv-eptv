@@ -7,12 +7,8 @@ import datetime
 DESCUENTO = 40
 
 def index(request):
-    productos = producto.objects.all()
-    data = { 
-
-        'productos': productos
-    }
-    return render(request, 'index.html', data)
+    productos = producto.objects.filter(disponibilidad=True).select_related('linea')
+    return render(request, 'index.html', {'productos': productos})
 
 def boleta(request, id):
     venta = encargo.objects.get(id=id)

@@ -1,66 +1,23 @@
-<!doctype html>
-<html lang="en" data-bs-theme="light">
-    <head>
-        <title>Pasteleria frmtv</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        <!-- Bootstrap CSS v5.3.8 -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-            crossorigin="anonymous"
-        />
-    </head>
-
-    <body class="container mt-3">
-        <header>
-            <div class="alert alert-info text-center display-3" role="alert">
-                Pastelería FRMTV - Bienvenidos a la pastelería FRMTV
-        </header>
-        <main>
-            {% if productos %}
-                
-                <div class="row justify-content-center align-items-center g-2 row-cols-3">
-                    {% for producto in productos %}
-                        <div class="col">
-                            <div class="card">
-                                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ producto.nombre }}</h5>
-                                    <p class="card-text">{{ producto.linea}}</p>
-                                    <p class="card-text">Precio: ${{ producto.precio }}</p>
-                                    <p class="card-text">Stock: {{ producto.stock_dia }}</p>
-                                    <p class="card-text">Disponibilidad: {{ producto.disponibilidad|yesno:"Sí,No"   }}</p>
-                                        {% if producto.disponibilidad %}
-                                            <a name="" id="" class="btn btn-primary w-100 mt-auto" href="encargar/{{ producto.id }}" role="button">ENCARGAR</a>
-                                        {% else %}
-                                            <a name="" id="" class="btn btn-danger w-100 mt-auto disabled" href="#" role="button">NO DISPONIBLE</a>
-                                        {% endif %}
-
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                
-            {% else %}
-                <div class="alert alert-warning text-center" role="alert">
-                    No hay productos disponibles
-                </div>
-            {% endif %}
-            
-        </main>
-        <footer>
-            <!-- place footer here -->
-        </footer>
-        <!-- Bootstrap JavaScript Bundle (includes Popper) -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-            crossorigin="anonymous"
-        ></script>
-    </body>
-</html>
+{% extends 'base.html' %}
+{% load formato %}
+{% block contenido %}
+<div class="row row-cols-3 g-3">
+  {% for p in productos %}
+  <div class="col">
+    <div class="card h-100">
+      {% if p.imagen %}<img src="{{ p.imagen.url }}" class="card-img-top" style="height:200px;object-fit:cover" alt="{{ p.nombre }}">{% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ p.nombre }}</h5>
+        <p class="card-text">{{ p.linea }} · {{ p.precio|clp }}</p>
+        {% if p.agotado %}
+          <span class="badge text-bg-danger">Agotado por hoy</span>
+        {% endif %}
+        <a class="btn btn-primary w-100 mt-2" href="{% url 'encargar' p.id %}">Ver producto</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="alert alert-warning text-center">No hay productos disponibles</div>
+  {% endfor %}
+</div>
+{% endblock %}
