@@ -24,7 +24,7 @@
         {% if p.agotado %}
           <span class="badge text-bg-danger">Agotado por hoy</span>
         {% endif %}
-        <a class="btn btn-primary w-100 mt-2" href="{% url 'encargar' p.id %}">Ver producto</a>
+        <a class="btn btn-primary w-100 mt-2" href="{% url 'detalle' p.id %}">Ver producto</a>
       </div>
     </div>
   </div>

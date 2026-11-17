@@ -4,7 +4,11 @@ from catalogo.forms import FormVentas
 import datetime
 # Create your views here.
 
-DESCUENTO = 40
+from django.shortcuts import render, redirect, get_object_or_404
+
+def detalle(request, id):
+    prod = get_object_or_404(producto, id=id, disponibilidad=True)
+    return render(request, 'detalle.html', {'producto': prod})
 
 def index(request):
     productos = producto.objects.filter(disponibilidad=True).select_related('linea')
@@ -56,16 +60,11 @@ def encargar(request, id):
             venta.codigo = form.cleaned_data['codigo']
 
 
-            descuento = DESCUENTO if venta.codigo != "" else 0
 
             valor_producto = prod.precio
             total_original = venta.cantidad * valor_producto
-            total_descuento = total_original * descuento / 100
-            total_final = total_original - total_descuento
 
             venta.total_original = total_original
-            venta.total_descuento = total_descuento
-            venta.total_final = total_final
             venta.save()
 
             return redirect('/boleta/' + str(venta.id))

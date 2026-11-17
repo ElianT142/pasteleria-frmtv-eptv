@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load formato %}
+{% block contenido %}
+<div class="row">
+  <div class="col-4">{% if producto.imagen %}<img src="{{ producto.imagen.url }}" class="img-fluid" alt="{{ producto.nombre }}">{% endif %}</div>
+  <div class="col">
+    <h1>{{ producto.nombre }}</h1>
+    <ul class="list-unstyled fs-5">
+      <li>Línea: {{ producto.linea }}</li>
+      <li>Precio: {{ producto.precio|clp }}</li>
+      <li>Porciones: {{ producto.cantidad }}</li>
+      <li>Apto para celíacos: {{ producto.apto_celiacos|yesno:'Sí,No' }}</li>
+      <li>Stock del día: {{ producto.stock_dia }}</li>
+    </ul>
+    {% if producto.agotado %}
+      <span class="badge text-bg-danger fs-6">Agotado por hoy</span>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'encargar' producto.id %}">Hacer encargo</a>
+    {% endif %}
+    <a class="btn btn-outline-secondary" href="/">Volver</a>
+  </div>
+</div>
+{% endblock %}
