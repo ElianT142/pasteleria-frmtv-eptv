@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from catalogo.models import linea, producto, encargo
-from catalogo.forms import FormVentas
+from catalogo.forms import EncargoForm
 import datetime
 # Create your views here.
 
@@ -33,44 +33,11 @@ def boleta(request, id):
     return render(request, 'boleta.html', data)
 
 def encargar(request, id):
-    prod = producto.objects.get(id=id)
-    form = FormVentas()
-    form.fields['id_encargo'].initial = id
-
-    if request.method == 'POST':
-        form = FormVentas(request.POST)
-        if form.is_valid():
-            cantidad = form.cleaned_data['cantidad']
-            prod.stock_dia -= cantidad
-            prod.cantidad -= cantidad
-
-        if prod.stock_dia <= 0 or prod.cantidad <= 0:
-            prod.stock_dia = 0
-            prod.cantidad = 0
-            prod.disponibilidad = False
-
-            prod.save()
-
-            venta = encargo()
-            venta.producto = prod
-            venta.nombre = form.cleaned_data['cliente']
-            venta.correo = form.cleaned_data['correo']
-            venta.fecha_retiro = form.cleaned_data['fecha_retiro']
-            venta.cantidad = cantidad
-            venta.codigo = form.cleaned_data['codigo']
-
-
-
-            valor_producto = prod.precio
-            total_original = venta.cantidad * valor_producto
-
-            venta.total_original = total_original
-            venta.save()
-
-            return redirect('/boleta/' + str(venta.id))
-
-    data = {
-        'producto': prod,
-        'form': form
-    }
-    return render(request, 'encargar.html', data)
+    prod = get_object_or_404(producto, id=id, disponibilidad=True)
+    form = EncargoForm(request.POST or None, producto=prod)
+    if request.method == 'POST' and form.is_valid():
+        enc = form.save(commit=False)
+        enc.producto = prod
+        enc.save()
+        return redirect('boleta', id=enc.id)
+    return render(request, 'encargar.html', {'producto': prod, 'form': form})
