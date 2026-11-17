@@ -24,4 +24,7 @@ class EncargoForm(forms.ModelForm):
         cantidad = self.cleaned_data['cantidad']
         if not 1 <= cantidad <= 3:
             raise forms.ValidationError('La cantidad debe estar entre 1 y 3.')
+        if self.producto and cantidad > self.producto.stock_dia:
+            raise forms.ValidationError(
+                f'Solo quedan {self.producto.stock_dia} unidades disponibles.')
         return cantidad

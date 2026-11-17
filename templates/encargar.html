@@ -28,12 +28,18 @@
                 </div>
                 <div class="col">
                     <h1 class ="display-3">{{ producto.nombre }}</h1>
-                    <form method="POST">               
-                        {% csrf_token %}
-                        {{form.as_p}}
-                        <a name="" id="" class="btn btn-danger" href="/" role="button">Volver</a>
-                        <button type="submit" class="btn btn-primary float-end">Guardar</button>
-                    </form>
+                    {% if agotado %}
+                        <div class="alert alert-danger">Agotado por hoy</div>
+                        <a class="btn btn-outline-secondary" href="/">Volver</a>
+                    {% else %}
+                        <p>Unidades disponibles: {{ producto.stock_dia }}</p>
+                        <form method="post">
+                            {% csrf_token %}
+                        {{ form.as_p }}
+                        <a class="btn btn-danger" href="{% url 'detalle' producto.id %}">Volver</a>
+                        <button class="btn btn-primary float-end">Guardar encargo</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
 

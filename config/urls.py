@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('encargar/<int:id>/', views.encargar, name='encargar'),
-    path('boleta/<int:id>/', views.boleta, name='boleta'),
+    path('boleta/<str:codigo>/', views.boleta, name='boleta'),
     path('producto/<int:id>/', views.detalle, name='detalle'),
 ]
 

@@ -2,6 +2,9 @@ from django.shortcuts import redirect, render
 from catalogo.models import linea, producto, encargo
 from catalogo.forms import EncargoForm
 import datetime
+from django.db import transaction
+from django.contrib import messages
+
 # Create your views here.
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -25,19 +28,24 @@ def index(request):
         'linea_sel': linea_id,
     })
 
-def boleta(request, id):
-    venta = encargo.objects.get(id=id)
-    data = {
-        'venta': venta
-    }
-    return render(request, 'boleta.html', data)
+def boleta(request, codigo):
+    venta = get_object_or_404(encargo, codigo=codigo)
+    return render(request, 'boleta.html', {'venta': venta})
 
 def encargar(request, id):
     prod = get_object_or_404(producto, id=id, disponibilidad=True)
+    if prod.agotado:
+        return render(request, 'encargar.html', {'producto': prod, 'agotado': True})
+
     form = EncargoForm(request.POST or None, producto=prod)
     if request.method == 'POST' and form.is_valid():
-        enc = form.save(commit=False)
-        enc.producto = prod
-        enc.save()
-        return redirect('boleta', id=enc.id)
+        with transaction.atomic():
+            enc = form.save(commit=False)
+            enc.producto = prod
+            enc.save()
+            prod.stock_dia -= enc.cantidad
+            prod.save(update_fields=['stock_dia'])
+            messages.success(request, f'Encargo registrado. Tu código es {enc.codigo}.')
+        return redirect('boleta', codigo=enc.codigo)
+
     return render(request, 'encargar.html', {'producto': prod, 'form': form})
